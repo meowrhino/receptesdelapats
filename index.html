@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les Receptes de la Pats</title>
     <style>
+        /* Estilos Generales */
         body {
             font-family: 'Georgia', serif;
             background-color: #FFF3E0;
             color: #5D4037;
             line-height: 1.6;
             padding: 20px;
-            max-width: 800px;
+            max-width: clamp(600px, 80%, 1600px);
             margin: auto;
             transition: background-color 0.3s ease-in-out;
         }
@@ -29,34 +30,43 @@
             margin-bottom: 40px;
         }
 
-        .emoji-container {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
+        /* Contenedor de recetas estilo masonry */
+        .recipe-container {
+            column-gap: 20px;
+            transition: all 0.5s ease-in-out;
         }
 
+        /* Media Queries para el Diseño Responsivo del Recipe Container */
+        @media (max-width: 1599px) {
+            .recipe-container {
+                column-count: 1;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .recipe-container {
+                column-count: 2;
+            }
+        }
+
+
+        /* Estilos para las Recetas */
         .recipe {
             position: relative;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease-in-out;
-        }
-
-        .recipe:hover {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease-in-out;
+            break-inside: avoid;
         }
 
         .recipe:nth-child(odd) {
             background: #FFECB3;
-            /* Color para recetas pares */
         }
 
         .recipe:nth-child(even) {
             background: #FFE0B2;
-            /* Color para recetas impares */
         }
 
         .recipe h2 {
@@ -65,6 +75,71 @@
             font-size: 1.8em;
         }
 
+        .recipe.hidden {
+            transform: scale(0.95);
+            opacity: 0.3;
+            color: #9e9e9e;
+            pointer-events: none;
+        }
+
+        .recipe.hidden .ingredients,
+        .recipe.hidden .steps {
+            display: none;
+        }
+
+        .recipe:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Transiciones y animaciones de las Recetas */
+        .hidden-bouncy {
+            animation: bounceOut 0.5s ease-in-out forwards;
+        }
+
+        .recipe.appearing {
+            animation: bounceIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes bounceOut {
+            0% {
+                transform: scale(1);
+            }
+
+            20% {
+                transform: scale(1.05);
+            }
+
+            40% {
+                transform: scale(0.95);
+            }
+
+            60% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Estilos de Ingredientes y Pasos */
         .ingredients,
         .steps {
             margin-top: 20px;
@@ -85,7 +160,7 @@
 
         .steps ol li {
             position: relative;
-            list-style: none; 
+            list-style: none;
             padding-left: 15px;
         }
 
@@ -98,7 +173,39 @@
             font-weight: bold;
         }
 
+        /* Estilos para el Contenedor de Alérgenos */
+        #alergia-container {
+            background-color: #ffc8b2;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            /* Automáticamente centra el contenedor horizontalmente */
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+        }
 
+        #alergia-container p {
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        .alergeno {
+            font-size: 1.5rem;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.3s, filter 0.3s;
+        }
+
+        .alergeno:hover {
+            transform: scale(1.2);
+        }
+
+        .alergeno.active {
+            filter: grayscale(100%);
+        }
+
+        /*emojis*/
 
         /* CSS para Estofat de pavo amb bolets */
         .ingredients-pavo ul li:nth-child(1)::before {
@@ -494,353 +601,425 @@
             content: "🍇 ";
         }
     </style>
+
 </head>
 
 <body>
     <h1>Les Receptes de la Pats</h1>
-    <p>Benvinguts al meu racó de cuina casolana! Espero que aquestes receptes us portin el caliu de la cuina feta amb
-        amor i una mica de dolçor als vostres dies.</p>
 
-    <div class="recipe">
-        <h2>Estofat de pavo amb bolets</h2>
-        <div class="emoji-container">🦃🥕🧄🧅🍄🫛</div>
-        <div class="ingredients ingredients-pavo">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>700g de gall dindi</li>
-                <li>3 pastanagues</li>
-                <li>1 ceba gran</li>
-                <li>2 alls</li>
-                <li>200g de pèsols</li>
-                <li>Qualsevol tipus de bolets</li>
-                <li>Vi blanc</li>
-                <li>Espècies (clau, romaní, farigola, llorer)</li>
-                <li>AOVE</li>
-                <li>Caldo (opcional)</li>
-            </ul>
+    <div id="alergia-container">
+        <p>¿Tienes alguna alergia? Si pasas el ratón por los iconos de abajo descubrirás qué recetas podemos censurarte para que no te haga mala sangre, para hacerlo sólo tienes que hacer click en el alérgeno que desees eliminar de tu menú</p>
+
+        <span class="alergeno" data-alergeno="gluten" title="Gluten">🌾</span>
+        <span class="alergeno" data-alergeno="lacteos" title="Lácteos">🥛</span>
+        <span class="alergeno" data-alergeno="huevos" title="Huevos">🥚</span>
+        <span class="alergeno" data-alergeno="soja" title="Soja">🌱</span>
+        <span class="alergeno" data-alergeno="cacahuete" title="Cacahuete">🥜</span>
+        <span class="alergeno" data-alergeno="frutos-secos" title="Frutos Secos">🌰</span>
+        <span class="alergeno" data-alergeno="marisco" title="Marisco">🦐</span>
+        <span class="alergeno" data-alergeno="pescado" title="Pescado">🐟</span>
+        <span class="alergeno" data-alergeno="apio" title="Apio">🌿</span>
+        <span class="alergeno" data-alergeno="sesamo" title="Sésamo">🧆</span>
+        <span class="alergeno" data-alergeno="mostaza" title="Mostaza">🌭</span>
+        <span class="alergeno" data-alergeno="sulfitos" title="Sulfitos">🎇</span>
+    </div>
+
+
+    <div class="recipe-container">
+        <div class="recipe gluten sulfitos lacteos">
+            <h2>Estofat de pavo amb bolets</h2>
+            <div class="ingredients ingredients-pavo">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>700g de gall dindi</li>
+                    <li>3 pastanagues</li>
+                    <li>1 ceba gran</li>
+                    <li>2 alls</li>
+                    <li>200g de pèsols</li>
+                    <li>Qualsevol tipus de bolets</li>
+                    <li>Vi blanc</li>
+                    <li>Espècies (clau, romaní, farigola, llorer)</li>
+                    <li>AOVE</li>
+                    <li>Caldo (opcional)</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Si els bolets són deshidratats, posar-los en aigua per hidratar-los.</li>
+                    <li>Preparar una paella amb tres cullerades d'oli, fregir dos alls fins que agafin gust.</li>
+                    <li>Fregir el gall dindi a foc ràpid per sellar-lo i retirar-lo de l'oli.</li>
+                    <li>Fregir la ceba picada fins que estigui tova.</li>
+                    <li>Afegir els pèsols, pastanaga tallada i els bolets i sofregir una mica.</li>
+                    <li>Afegir el gall dindi de nou i un raig de vi blanc.</li>
+                    <li>Afegir aigua o caldo fins a cobrir i posar les espècies.</li>
+                    <li>Deixar coure a foc lent durant una hora fins que es redueixi i corregir la sal.</li>
+                </ol>
+            </div>
         </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Si els bolets són deshidratats, posar-los en aigua per hidratar-los.</li>
-                <li>Preparar una paella amb tres cullerades d'oli, fregir dos alls fins que agafin gust.</li>
-                <li>Fregir el gall dindi a foc ràpid per sellar-lo i retirar-lo de l'oli.</li>
-                <li>Fregir la ceba picada fins que estigui tova.</li>
-                <li>Afegir els pèsols, pastanaga tallada i els bolets i sofregir una mica.</li>
-                <li>Afegir el gall dindi de nou i un raig de vi blanc.</li>
-                <li>Afegir aigua o caldo fins a cobrir i posar les espècies.</li>
-                <li>Deixar coure a foc lent durant una hora fins que es redueixi i corregir la sal.</li>
-            </ol>
+
+        <div class="recipe marisco pescado sulfitos">
+            <h2>Fideuà</h2>
+            <div class="ingredients ingredients-fideua">
+                <h3>Ingredients (per a 4 persones):</h3>
+                <ul>
+                    <li>1 calamar (aprox. 300-400g)</li>
+                    <li>300-400g de gambes pelades</li>
+                    <li>400g de fideus</li>
+                    <li>1 pebrot vermell</li>
+                    <li>1 pebrot verd</li>
+                    <li>800ml de caldo</li>
+                    <li>AOVE</li>
+                    <li>sal (opcional)</li>
+                    <li>safrà (opcional)</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Descongelar les gambes i els calamars si cal.</li>
+                    <li>Tallar la verdura a daus molt petits.</li>
+                    <li>Torrar els fideus amb dues cullerades d'oli a foc mitjà.</li>
+                    <li>Retirar els fideus i sofregir la verdura fins que estigui tova.</li>
+                    <li>Afegir el calamar i les gambes i cuinar uns minuts.</li>
+                    <li>Afegir els fideus torrats, remenar, i afegir el caldo i el safrà.</li>
+                    <li>Deixar coure uns 20 minuts, sacsejant la paella de tant en tant.</li>
+                    <li>Posar al forn a gratinar durant 5 minuts per aconseguir el socarrim.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe gluten lacteos frutos-secos huevos">
+            <h2>Cheesecake</h2>
+            <div class="ingredients ingredients-cheesecake">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>150g de galetes digestive</li>
+                    <li>60g de mantega fosa</li>
+                    <li>300g de formatge a temperatura ambient</li>
+                    <li>100g de sucre glass</li>
+                    <li>2 ous a temperatura ambient</li>
+                    <li>1 culleradeta de suc de llimona</li>
+                    <li>14g de farina</li>
+                    <li>185g de nata agra a temperatura ambient</li>
+                    <li>Melmelada de maduixa</li>
+                    <li>Fruits vermells al gust</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Fondre la mantega i triturar les galetes.</li>
+                    <li>Barrejar i fer una capa en els motlles de magdalena.</li>
+                    <li>Batre el formatge fins que quedi cremós i afegir el sucre.</li>
+                    <li>Afegir els ous un a un, després el suc de llimona i la farina, barrejant el mínim possible.</li>
+                    <li>Afegir la nata agra i dividir en els motlles.</li>
+                    <li>Enfornar a 160ºC durant 15 minuts o fins que tremolin una mica.</li>
+                    <li>Deixar refredar i posar a la nevera 8 hores.</li>
+                    <li>Decorar amb melmelada i fruits vermells abans de servir.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe huevos frutos-secos pescado sulfitos">
+            <h2>Mandonguilles amb sípia</h2>
+            <div class="ingredients">
+                <h3>Pilotes:</h3>
+                <ul class="ingredients-pilotes">
+                    <li>360g de carn picada de vedella</li>
+                    <li>360g de carn picada de porc</li>
+                    <li>2 ous</li>
+                    <li>Julivert fresc</li>
+                    <li>3 alls</li>
+                    <li>Pa ratllat</li>
+                    <li>Farina</li>
+                </ul>
+                <h3>Salsa:</h3>
+                <ul class="ingredients-salsa">
+                    <li>3 sípies mitjanes</li>
+                    <li>1/2 litre de fumet</li>
+                    <li>Pèsols</li>
+                    <li>2 cebes</li>
+                    <li>1 got de vermut</li>
+                </ul>
+                <h3>Picada:</h3>
+                <ul class="ingredients-picada">
+                    <li>Avellanes</li>
+                    <li>All rostit</li>
+                    <li>Ametlles</li>
+                    <li>Julivert fresc</li>
+                    <li>Xocolata negra</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Formar les mandonguilles i enfarinar-les.</li>
+                    <li>Sofregir all picat i ceba en una olla.</li>
+                    <li>Afegir la sípia i cuinar fins que estigui feta.</li>
+                    <li>Preparar la picada amb els ingredients indicats.</li>
+                    <li>Afegir vermut a l'olla i evaporar l'alcohol.</li>
+                    <li>Afegir les mandonguilles, el fumet calent i la picada.</li>
+                    <li>Posar els pèsols i deixar coure 15 minuts.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe sulfitos">
+            <h2>Llom a la taronja i vermut</h2>
+            <div class="ingredients ingredients-llom">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>1 solomillo de porc</li>
+                    <li>Suc de 3 taronges i la polpa</li>
+                    <li>5 pastanagues petites</li>
+                    <li>2 cebes mitjanes</li>
+                    <li>1 got de vermut</li>
+                    <li>Orejons, prunes seques, panses</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Fregir el solomillo per tots els costats.</li>
+                    <li>Caramel·litzar la ceba i la pastanaga.</li>
+                    <li>Afegir el vermut i evaporar l'alcohol.</li>
+                    <li>Afegir el suc i la polpa de taronja, les panses, prunes i orejons.</li>
+                    <li>Posar el solomillo i cuinar en olla a pressió durant 10 minuts.</li>
+                    <li>Treure el solomillo, reduir la salsa, tallar-lo i servir amb la salsa.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe frutos-secos lacteos">
+            <h2>Entrepans de nab</h2>
+            <div class="ingredients ingredients-entrepans">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>Raves vermells</li>
+                    <li>Poma</li>
+                    <li>Mantega</li>
+                    <li>Anxova</li>
+                    <li>Alfàbrega</li>
+                    <li>All</li>
+                    <li>Oli d'oliva</li>
+                    <li>Formatge parmesà</li>
+                    <li>Pistatxo</li>
+                    <li>Sal</li>
+                    <li>Enciam</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Fer mantega d'anxoves.</li>
+                    <li>Preparar el pesto amb festucs, oli, all, sal i formatge parmesà.</li>
+                    <li>Tallar els raves i la poma molt finets.</li>
+                    <li>Laminar poma.</li>
+                    <li>Muntar els entrepans amb enciam, raves, poma, mantega d'anxoves i pesto.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe gluten lacteos huevos frutos-secos">
+            <h2>Brownies de xocolata</h2>
+            <div class="ingredients ingredients-brownies">
+                <h3>Ingredients (per a una safata de forn mitjana):</h3>
+                <ul>
+                    <li>250g de xocolata negra de bona qualitat</li>
+                    <li>150g de mantega</li>
+                    <li>165g de sucre moreno</li>
+                    <li>3 ous a temperatura ambient</li>
+                    <li>75g de farina blanca</li>
+                    <li>2 cullerades soperes de cacau pur</li>
+                    <li>1/2 sobre de llevat (7 grams)</li>
+                    <li>150g de nous sense closca</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Preescalfar el forn a 180ºC o 160ºC amb ventilador.</li>
+                    <li>Triturar la xocolata negra i la mantega i posar-los a fondre al bany maria. Remenar de tant en
+                        tant
+                        i vigilar que no hi entri aigua.</li>
+                    <li>Posar les nous sobre paper de forn a torrar durant 8-10 minuts.</li>
+                    <li>Retirar la xocolata i la mantega del foc i deixar refredar.</li>
+                    <li>Barrejar els 3 ous i el sucre suaument fins que els grans de sucre es dissolguin.</li>
+                    <li>Afegir la xocolata i la mantega un cop refredats.</li>
+                    <li>Barrejar els ingredients secs: farina, cacau i llevat, i tamisar-los a la barreja líquida.</li>
+                    <li>Remenar fins que no quedin grumolls.</li>
+                    <li>Afegir les nous torrades.</li>
+                    <li>Untar un motlle pla amb mantega i recobrir amb cacau en pols. Afegir la barreja.</li>
+                    <li>Enfornar durant 35-40 minuts.</li>
+                    <li>Retirar, deixar refredar i servir (amb nata muntada si es vol!).</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe gluten lacteos">
+            <h2>Galetes de mantega</h2>
+            <div class="ingredients ingredients-galetes">
+                <h3>Ingredients (per a 25 galetes petites):</h3>
+                <ul>
+                    <li>50g de sucre</li>
+                    <li>100g de mantega</li>
+                    <li>150g de farina</li>
+                    <li>Una mica de sal</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Deixar la mantega fora perquè s'ablaneixi.</li>
+                    <li>Preescalfar el forn a 180ºC amunt i avall sense ventilador.</li>
+                    <li>Barrejar la mantega i el sucre amb una batedora manual.</li>
+                    <li>Afegir la farina tamisada i barrejar amb les mans fins que tot estigui integrat.</li>
+                    <li>Embolicar en paper film i deixar a la nevera durant mitja hora.</li>
+                    <li>Formar boles de 10g i col·locar-les a la safata del forn freda amb paper de cuina.</li>
+                    <li>Enfornar durant 15-20 minuts fins que comencin a daurar-se una mica.</li>
+                    <li>Refredar damunt d'una reixeta.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe gluten lacteos huevos">
+            <h2>Quiche</h2>
+            <div class="ingredients ingredients-quiche">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>1 massa trencada</li>
+                    <li>4 ous</li>
+                    <li>200ml de nata</li>
+                    <li>Farciment al gust</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Preescalfar el forn a 180-200ºC.</li>
+                    <li>Cuinar la massa sola primer al forn durant uns minuts.</li>
+                    <li>Barrejar els ous amb la nata i afegir el farciment que es vulgui.</li>
+                    <li>Abocar la barreja sobre la massa i enfornar durant 30 minuts.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe sulfitos">
+            <h2>Pollastre a la cervesa</h2>
+            <div class="ingredients ingredients-pollastre">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>2-3 pits de pollastre sencers</li>
+                    <li>1 ceba gran</li>
+                    <li>2-3 pastanagues grans</li>
+                    <li>2 alls</li>
+                    <li>1 cervesa de bona qualitat (millor negra)</li>
+                    <li>Caldo de pollastre</li>
+                    <li>Sal i pebre</li>
+                    <li>AOVE</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Tallar els pits de pollastre a trossos grans.</li>
+                    <li>En una paella amb oli d'oliva, daurar els alls aixafats.</li>
+                    <li>Afegir els trossos de pollastre i daurar-los per fora.</li>
+                    <li>Retirar el pollastre i daurar la ceba picada amb el mateix oli.</li>
+                    <li>Afegir les pastanagues tallades i sofregir uns minuts.</li>
+                    <li>Afegir el pollastre de nou, abocar la cervesa fins a cobrir el pollastre.</li>
+                    <li>Afegir caldo fins a cobrir si cal i deixar bullir a foc baix durant 1 hora.</li>
+                    <li>Salpebrar al gust i servir.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="recipe gluten lacteos frutos-secos">
+            <h2>Cheesecake (sense forn)</h2>
+            <div class="ingredients ingredients-cheesecake2">
+                <h3>Ingredients:</h3>
+                <ul>
+                    <li>1 terrina de formatge tipus Philadelphia</li>
+                    <li>1 pot de nata líquida per muntar</li>
+                    <li>1 paquet de galetes Digestive</li>
+                    <li>150g de mantega</li>
+                    <li>80g de sucre (al gust)</li>
+                    <li>6 làmines de gelatina (opcional)</li>
+                    <li>1 pot de melmelada de maduixa</li>
+                    <li>Fruits vermells per decorar</li>
+                </ul>
+            </div>
+            <div class="steps">
+                <h3>Passos:</h3>
+                <ol>
+                    <li>Deixar la nata líquida a la nevera durant 24 hores.</li>
+                    <li>Fondre la mantega i triturar les galetes.</li>
+                    <li>Barrejar la mantega amb les galetes per fer la base al motlle.</li>
+                    <li>En un bol, muntar la nata.</li>
+                    <li>Batre el formatge amb el sucre fins que quedi suau.</li>
+                    <li>Afegir la gelatina hidratada (segons el paquet) al formatge.</li>
+                    <li>Afegir la nata muntada amb una espàtula i barrejar suaument.</li>
+                    <li>Posar-ho tot al motlle i deixar a la nevera mínim 5 hores.</li>
+                    <li>Decorar amb melmelada i fruits vermells abans de servir.</li>
+                </ol>
+            </div>
         </div>
     </div>
 
-    <div class="recipe">
-        <h2>Fideuà</h2>
-        <div class="ingredients ingredients-fideua">
-            <h3>Ingredients (per a 4 persones):</h3>
-            <ul>
-                <li>1 calamar (aprox. 300-400g)</li>
-                <li>300-400g de gambes pelades</li>
-                <li>400g de fideus</li>
-                <li>1 pebrot vermell</li>
-                <li>1 pebrot verd</li>
-                <li>800ml de caldo</li>
-                <li>AOVE</li>
-                <li>sal (opcional)</li>
-                <li>safrà (opcional)</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Descongelar les gambes i els calamars si cal.</li>
-                <li>Tallar la verdura a daus molt petits.</li>
-                <li>Torrar els fideus amb dues cullerades d'oli a foc mitjà.</li>
-                <li>Retirar els fideus i sofregir la verdura fins que estigui tova.</li>
-                <li>Afegir el calamar i les gambes i cuinar uns minuts.</li>
-                <li>Afegir els fideus torrats, remenar, i afegir el caldo i el safrà.</li>
-                <li>Deixar coure uns 20 minuts, sacsejant la paella de tant en tant.</li>
-                <li>Posar al forn a gratinar durant 5 minuts per aconseguir el socarrim.</li>
-            </ol>
-        </div>
-    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const alergenos = document.querySelectorAll(".alergeno");
+            const recipes = document.querySelectorAll(".recipe");
+    
+            alergenos.forEach(alergeno => {
+                alergeno.addEventListener("click", function () {
+                    // Toggle 'active' class to mark allergen as selected
+                    alergeno.classList.toggle("active");
+    
+                    // Get the allergen data attribute (e.g., 'gluten')
+                    const alergenoName = alergeno.getAttribute("data-alergeno");
+    
+                    // Hide or show recipes based on selected allergens
+                    recipes.forEach(recipe => {
+                        if (recipe.classList.contains(alergenoName)) {
+                            if (alergeno.classList.contains("active")) {
+                                // Ocultar receta con animación
+                                recipe.classList.add("hidden");
+                                recipe.classList.remove("appearing");
+                            } else {
+                                // Mostrar receta con animación
+                                recipe.classList.remove("hidden");
+                                recipe.classList.add("appearing");
+                            }
+                        }
+                    });
+                });
+    
+                // Añadir tooltip en el hover de cada alérgeno
+                alergeno.addEventListener("mouseenter", function () {
+                    const tooltip = document.createElement("div");
+                    tooltip.className = "tooltip";
+                    tooltip.innerText = alergeno.getAttribute("title");
+                    document.body.appendChild(tooltip);
+    
+                    // Posicionar el tooltip cerca del alérgeno
+                    const rect = alergeno.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + window.scrollX + 10}px`;
+                    tooltip.style.top = `${rect.top + window.scrollY - 10}px`;
+                });
+    
+                // Quitar el tooltip cuando el mouse sale del alérgeno
+                alergeno.addEventListener("mouseleave", function () {
+                    const tooltip = document.querySelector(".tooltip");
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+        });
+    </script>
 
-    <div class="recipe">
-        <h2>Cheesecake (12 individuals)</h2>
-        <div class="ingredients ingredients-cheesecake">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>150g de galetes digestive</li>
-                <li>60g de mantega fosa</li>
-                <li>300g de formatge a temperatura ambient</li>
-                <li>100g de sucre glass</li>
-                <li>2 ous a temperatura ambient</li>
-                <li>1 culleradeta de suc de llimona</li>
-                <li>14g de farina</li>
-                <li>185g de nata agra a temperatura ambient</li>
-                <li>Melmelada de maduixa</li>
-                <li>Fruits vermells al gust</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Fondre la mantega i triturar les galetes.</li>
-                <li>Barrejar i fer una capa en els motlles de magdalena.</li>
-                <li>Batre el formatge fins que quedi cremós i afegir el sucre.</li>
-                <li>Afegir els ous un a un, després el suc de llimona i la farina, barrejant el mínim possible.</li>
-                <li>Afegir la nata agra i dividir en els motlles.</li>
-                <li>Enfornar a 160ºC durant 15 minuts o fins que tremolin una mica.</li>
-                <li>Deixar refredar i posar a la nevera 8 hores.</li>
-                <li>Decorar amb melmelada i fruits vermells abans de servir.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Mandonguilles amb sípia</h2>
-        <div class="ingredients">
-            <h3>Pilotes:</h3>
-            <ul class="ingredients-pilotes">
-                <li>360g de carn picada de vedella</li>
-                <li>360g de carn picada de porc</li>
-                <li>2 ous</li>
-                <li>Julivert fresc</li>
-                <li>3 alls</li>
-                <li>Pa ratllat</li>
-                <li>Farina</li>
-            </ul>
-            <h3>Salsa:</h3>
-            <ul class="ingredients-salsa">
-                <li>3 sípies mitjanes</li>
-                <li>1/2 litre de fumet</li>
-                <li>Pèsols</li>
-                <li>2 cebes</li>
-                <li>1 got de vermut</li>
-            </ul>
-            <h3>Picada:</h3>
-            <ul class="ingredients-picada">
-                <li>Avellanes</li>
-                <li>All rostit</li>
-                <li>Ametlles</li>
-                <li>Julivert fresc</li>
-                <li>Xocolata negra</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Formar les mandonguilles i enfarinar-les.</li>
-                <li>Sofregir all picat i ceba en una olla.</li>
-                <li>Afegir la sípia i cuinar fins que estigui feta.</li>
-                <li>Preparar la picada amb els ingredients indicats.</li>
-                <li>Afegir vermut a l'olla i evaporar l'alcohol.</li>
-                <li>Afegir les mandonguilles, el fumet calent i la picada.</li>
-                <li>Posar els pèsols i deixar coure 15 minuts.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Llom a la taronja i vermut</h2>
-        <div class="ingredients ingredients-llom">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>1 solomillo de porc</li>
-                <li>Suc de 3 taronges i la polpa</li>
-                <li>5 pastanagues petites</li>
-                <li>2 cebes mitjanes</li>
-                <li>1 got de vermut</li>
-                <li>Orejons, prunes seques, panses</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Fregir el solomillo per tots els costats.</li>
-                <li>Caramel·litzar la ceba i la pastanaga.</li>
-                <li>Afegir el vermut i evaporar l'alcohol.</li>
-                <li>Afegir el suc i la polpa de taronja, les panses, prunes i orejons.</li>
-                <li>Posar el solomillo i cuinar en olla a pressió durant 10 minuts.</li>
-                <li>Treure el solomillo, reduir la salsa, tallar-lo i servir amb la salsa.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Entrepans de nab</h2>
-        <div class="ingredients ingredients-entrepans">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>Raves vermells</li>
-                <li>Poma</li>
-                <li>Mantega</li>
-                <li>Anxova</li>
-                <li>Alfàbrega</li>
-                <li>All</li>
-                <li>Oli d'oliva</li>
-                <li>Formatge parmesà</li>
-                <li>Pistatxo</li>
-                <li>Sal</li>
-                <li>Enciam</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Fer mantega d'anxoves.</li>
-                <li>Preparar el pesto amb festucs, oli, all, sal i formatge parmesà.</li>
-                <li>Tallar els raves i la poma molt finets.</li>
-                <li>Laminar poma.</li>
-                <li>Muntar els entrepans amb enciam, raves, poma, mantega d'anxoves i pesto.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <div class="emoji-container">🍫🥄🧈</div>
-        <h2>Brownies de xocolata</h2>
-        <div class="ingredients ingredients-brownies">
-            <h3>Ingredients (per a una safata de forn mitjana):</h3>
-            <ul>
-                <li>250g de xocolata negra de bona qualitat</li>
-                <li>150g de mantega</li>
-                <li>165g de sucre moreno</li>
-                <li>3 ous a temperatura ambient</li>
-                <li>75g de farina blanca</li>
-                <li>2 cullerades soperes de cacau pur</li>
-                <li>1/2 sobre de llevat (7 grams)</li>
-                <li>150g de nous sense closca</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Preescalfar el forn a 180ºC o 160ºC amb ventilador.</li>
-                <li>Triturar la xocolata negra i la mantega i posar-los a fondre al bany maria. Remenar de tant en tant
-                    i vigilar que no hi entri aigua.</li>
-                <li>Posar les nous sobre paper de forn a torrar durant 8-10 minuts.</li>
-                <li>Retirar la xocolata i la mantega del foc i deixar refredar.</li>
-                <li>Barrejar els 3 ous i el sucre suaument fins que els grans de sucre es dissolguin.</li>
-                <li>Afegir la xocolata i la mantega un cop refredats.</li>
-                <li>Barrejar els ingredients secs: farina, cacau i llevat, i tamisar-los a la barreja líquida.</li>
-                <li>Remenar fins que no quedin grumolls.</li>
-                <li>Afegir les nous torrades.</li>
-                <li>Untar un motlle pla amb mantega i recobrir amb cacau en pols. Afegir la barreja.</li>
-                <li>Enfornar durant 35-40 minuts.</li>
-                <li>Retirar, deixar refredar i servir (amb nata muntada si es vol!).</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Galetes de mantega</h2>
-        <div class="ingredients ingredients-galetes">
-            <h3>Ingredients (per a 25 galetes petites):</h3>
-            <ul>
-                <li>50g de sucre</li>
-                <li>100g de mantega</li>
-                <li>150g de farina</li>
-                <li>Una mica de sal</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Deixar la mantega fora perquè s'ablaneixi.</li>
-                <li>Preescalfar el forn a 180ºC amunt i avall sense ventilador.</li>
-                <li>Barrejar la mantega i el sucre amb una batedora manual.</li>
-                <li>Afegir la farina tamisada i barrejar amb les mans fins que tot estigui integrat.</li>
-                <li>Embolicar en paper film i deixar a la nevera durant mitja hora.</li>
-                <li>Formar boles de 10g i col·locar-les a la safata del forn freda amb paper de cuina.</li>
-                <li>Enfornar durant 15-20 minuts fins que comencin a daurar-se una mica.</li>
-                <li>Refredar damunt d'una reixeta.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Quiche</h2>
-        <div class="ingredients ingredients-quiche">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>1 massa trencada</li>
-                <li>4 ous</li>
-                <li>200ml de nata</li>
-                <li>Farciment al gust</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Preescalfar el forn a 180-200ºC.</li>
-                <li>Cuinar la massa sola primer al forn durant uns minuts.</li>
-                <li>Barrejar els ous amb la nata i afegir el farciment que es vulgui.</li>
-                <li>Abocar la barreja sobre la massa i enfornar durant 30 minuts.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Pollastre a la cervesa</h2>
-        <div class="ingredients ingredients-pollastre">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>2-3 pits de pollastre sencers</li>
-                <li>1 ceba gran</li>
-                <li>2-3 pastanagues grans</li>
-                <li>2 alls</li>
-                <li>1 cervesa de bona qualitat (millor negra)</li>
-                <li>Caldo de pollastre</li>
-                <li>Sal i pebre</li>
-                <li>AOVE</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Tallar els pits de pollastre a trossos grans.</li>
-                <li>En una paella amb oli d'oliva, daurar els alls aixafats.</li>
-                <li>Afegir els trossos de pollastre i daurar-los per fora.</li>
-                <li>Retirar el pollastre i daurar la ceba picada amb el mateix oli.</li>
-                <li>Afegir les pastanagues tallades i sofregir uns minuts.</li>
-                <li>Afegir el pollastre de nou, abocar la cervesa fins a cobrir el pollastre.</li>
-                <li>Afegir caldo fins a cobrir si cal i deixar bullir a foc baix durant 1 hora.</li>
-                <li>Salpebrar al gust i servir.</li>
-            </ol>
-        </div>
-    </div>
-
-    <div class="recipe">
-        <h2>Cheesecake (sense forn)</h2>
-        <div class="ingredients ingredients-cheesecake2">
-            <h3>Ingredients:</h3>
-            <ul>
-                <li>1 terrina de formatge tipus Philadelphia</li>
-                <li>1 pot de nata líquida per muntar</li>
-                <li>1 paquet de galetes Digestive</li>
-                <li>150g de mantega</li>
-                <li>80g de sucre (al gust)</li>
-                <li>6 làmines de gelatina (opcional)</li>
-                <li>1 pot de melmelada de maduixa</li>
-                <li>Fruits vermells per decorar</li>
-            </ul>
-        </div>
-        <div class="steps">
-            <h3>Passos:</h3>
-            <ol>
-                <li>Deixar la nata líquida a la nevera durant 24 hores.</li>
-                <li>Fondre la mantega i triturar les galetes.</li>
-                <li>Barrejar la mantega amb les galetes per fer la base al motlle.</li>
-                <li>En un bol, muntar la nata.</li>
-                <li>Batre el formatge amb el sucre fins que quedi suau.</li>
-                <li>Afegir la gelatina hidratada (segons el paquet) al formatge.</li>
-                <li>Afegir la nata muntada amb una espàtula i barrejar suaument.</li>
-                <li>Posar-ho tot al motlle i deixar a la nevera mínim 5 hores.</li>
-                <li>Decorar amb melmelada i fruits vermells abans de servir.</li>
-            </ol>
-        </div>
-    </div>
 </body>
 
 </html>
