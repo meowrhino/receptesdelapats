@@ -9,13 +9,16 @@
         /* Estilos Generales */
         body {
             font-family: 'Georgia', serif;
-            background-color: #FFF3E0;
+            /*background-color: #FFF3E0;*/
             color: #5D4037;
             line-height: 1.6;
             padding: 20px;
-            max-width: clamp(600px, 80%, 1600px);
             margin: auto;
             transition: background-color 0.3s ease-in-out;
+
+            background-color: #FFF3E0;
+            opacity: 1;
+            background: repeating-linear-gradient(-45deg, #B99470, #B99470 8px, #FFF3E0 8px, #FFF3E0 40px);
         }
 
         h1,
@@ -28,11 +31,14 @@
         h1 {
             text-align: center;
             margin-bottom: 40px;
+            font-size: 40px;
+            text-rendering: optimizeLegibility;
         }
 
         /* Contenedor de recetas estilo masonry */
         .recipe-container {
             column-gap: 20px;
+            max-width: clamp(600px, 80%, 1600px);
             transition: all 0.5s ease-in-out;
         }
 
@@ -58,15 +64,90 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.5s ease-in-out;
-            break-inside: avoid;
         }
 
-        .recipe:nth-child(odd) {
+        .info {
+            position: relative;
+            /* Asegura que los elementos hijos puedan ser posicionados de forma absoluta */
+            background-color: #B99470;
+            color: #5D4037;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding-left: 100px;
+            margin-left: -100px;
+            overflow: visible;
+            transition: transform 0.6s cubic-bezier(0.25, 1.3, 0.5, 1), margin-left 0.6s cubic-bezier(0.25, 1.3, 0.5, 1);
+            transform: translateX(-100%);
+            /* Oculta inicialmente el contenedor completo */
+        }
+
+        /* Estilos para la lengüeta "info" */
+        .info-tab {
+            position: absolute;
+            right: -50px;
+            /* Ajuste inicial para colocar la lengüeta fuera */
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            background-color: #5D4037;
+            color: #FFF3E0;
+            padding: 5px 10px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: -3px 0 6px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            /* Para que esté siempre encima y visible */
+            transition: transform 0.4s cubic-bezier(0.25, 1.3, 0.5, 1);
+            padding-bottom: 100px;
+        }
+
+        /* Cambiar el z-index, la posición y aplicar la animación al pasar el ratón por la lengüeta */
+        .info-tab:hover {
+            transform: translateY(-50%) rotate(90deg) scale(1.1);
+        }
+
+
+        /* Definir la animación bouncy de derecha a izquierda */
+        @keyframes bounceHorizontalTab {
+            0% {
+                transform: translateY(-50%) rotate(90deg) translateX(0);
+            }
+
+            30% {
+                transform: translateY(-50%) rotate(90deg) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(-50%) rotate(90deg) translateX(-5px);
+            }
+
+            70% {
+                transform: translateY(-50%) rotate(90deg) translateX(7px);
+            }
+
+            100% {
+                transform: translateY(-50%) rotate(90deg) translateX(0);
+            }
+        }
+
+
+
+        /* Aplicar tres colores alternativos a las recetas */
+        .recipe:nth-child(3n + 1) {
             background: #FFECB3;
+            /* Color 1 */
         }
 
-        .recipe:nth-child(even) {
+        .recipe:nth-child(3n + 2) {
             background: #FFE0B2;
+            /* Color 2 */
+        }
+
+        .recipe:nth-child(3n) {
+            background: #FFECC8;
+            /* Color 3 */
         }
 
         .recipe h2 {
@@ -175,15 +256,22 @@
 
         /* Estilos para el Contenedor de Alérgenos */
         #alergia-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+
             background-color: #ffc8b2;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px auto;
-            /* Automáticamente centra el contenedor horizontalmente */
-            text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 80%;
+            border-radius: 8px;
+
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
+
 
         #alergia-container p {
             width: 80%;
@@ -191,7 +279,7 @@
         }
 
         .alergeno {
-            font-size: 1.5rem;
+            font-size: 1rem;
             margin: 0 10px;
             cursor: pointer;
             transition: transform 0.3s, filter 0.3s;
@@ -203,6 +291,28 @@
 
         .alergeno.active {
             filter: grayscale(100%);
+        }
+
+
+        .tooltip {
+            position: absolute;
+            background-color: #5D4037;
+            color: #FFF3E0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            /* Asegura que el tooltip esté sobre otros elementos */
+            white-space: nowrap;
+            /* Mantiene el texto en una sola línea */
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            /* Inicialmente invisible */
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            /* Muestra el tooltip con una transición */
         }
 
         /*emojis*/
@@ -605,13 +715,15 @@
 </head>
 
 <body>
-    <h1>Les Receptes de la Pats</h1>
+
+    <marquee behavior="alternate">
+        <h1>Les Receptes de la Pats</h1>
+    </marquee>
 
     <div id="alergia-container">
-        <p>¿Tienes alguna alergia? Si pasas el ratón por los iconos de abajo descubrirás qué recetas podemos censurarte para que no te haga mala sangre, para hacerlo sólo tienes que hacer click en el alérgeno que desees eliminar de tu menú</p>
 
         <span class="alergeno" data-alergeno="gluten" title="Gluten">🌾</span>
-        <span class="alergeno" data-alergeno="lacteos" title="Lácteos">🥛</span>
+        <span class="alergeno" data-alergeno="lacteos" title="Lácteos">🐄</span>
         <span class="alergeno" data-alergeno="huevos" title="Huevos">🥚</span>
         <span class="alergeno" data-alergeno="soja" title="Soja">🌱</span>
         <span class="alergeno" data-alergeno="cacahuete" title="Cacahuete">🥜</span>
@@ -624,8 +736,15 @@
         <span class="alergeno" data-alergeno="sulfitos" title="Sulfitos">🎇</span>
     </div>
 
-
     <div class="recipe-container">
+        <div class="info">
+            <div class="info-tab">Info</div>
+            <p>¿Tienes alguna alergia? Si pasas el ratón por los iconos de abajo descubrirás qué recetas podemos
+                censurarte para que no te haga mala sangre, para hacerlo sólo tienes que hacer click en el alérgeno que
+                desees
+                eliminar de tu menú</p>
+        </div>
+
         <div class="recipe gluten sulfitos lacteos">
             <h2>Estofat de pavo amb bolets</h2>
             <div class="ingredients ingredients-pavo">
@@ -971,15 +1090,16 @@
         document.addEventListener("DOMContentLoaded", function () {
             const alergenos = document.querySelectorAll(".alergeno");
             const recipes = document.querySelectorAll(".recipe");
-    
+            let activeTooltip = null;
+
             alergenos.forEach(alergeno => {
                 alergeno.addEventListener("click", function () {
                     // Toggle 'active' class to mark allergen as selected
                     alergeno.classList.toggle("active");
-    
+
                     // Get the allergen data attribute (e.g., 'gluten')
                     const alergenoName = alergeno.getAttribute("data-alergeno");
-    
+
                     // Hide or show recipes based on selected allergens
                     recipes.forEach(recipe => {
                         if (recipe.classList.contains(alergenoName)) {
@@ -994,28 +1114,60 @@
                             }
                         }
                     });
-                });
-    
-                // Añadir tooltip en el hover de cada alérgeno
-                alergeno.addEventListener("mouseenter", function () {
+
+                    // Mostrar el tooltip en móvil/desktop
+                    if (activeTooltip) {
+                        activeTooltip.remove(); // Elimina cualquier tooltip existente
+                    }
+
                     const tooltip = document.createElement("div");
                     tooltip.className = "tooltip";
                     tooltip.innerText = alergeno.getAttribute("title");
                     document.body.appendChild(tooltip);
-    
+
                     // Posicionar el tooltip cerca del alérgeno
                     const rect = alergeno.getBoundingClientRect();
                     tooltip.style.left = `${rect.left + window.scrollX + 10}px`;
-                    tooltip.style.top = `${rect.top + window.scrollY - 10}px`;
+                    tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+
+                    activeTooltip = tooltip; // Guardar el tooltip activo
+
+                    // Añadir un evento para cerrar el tooltip cuando se hace clic en cualquier parte del documento
+                    document.addEventListener("click", function handleDocumentClick(event) {
+                        if (!alergeno.contains(event.target) && !tooltip.contains(event.target)) {
+                            if (activeTooltip) {
+                                activeTooltip.remove();
+                                activeTooltip = null;
+                            }
+                            document.removeEventListener("click", handleDocumentClick);
+                        }
+                    });
                 });
-    
-                // Quitar el tooltip cuando el mouse sale del alérgeno
-                alergeno.addEventListener("mouseleave", function () {
-                    const tooltip = document.querySelector(".tooltip");
-                    if (tooltip) {
-                        tooltip.remove();
-                    }
-                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Seleccionar los elementos necesarios
+            const infoContainer = document.querySelector('.info');
+            const infoTab = document.querySelector('.info-tab');
+
+            // Variable para almacenar el estado actual del contenedor
+            let isInfoVisible = false;
+
+            // Añadir evento de clic a la lengüeta
+            infoTab.addEventListener('click', function () {
+                if (isInfoVisible) {
+                    // Ocultar el contenedor .info
+                    infoContainer.style.transform = "translateX(-100%)";
+                    infoContainer.style.marginLeft = "-50px";
+                    isInfoVisible = false;
+                } else {
+                    // Mostrar el contenedor .info
+                    infoContainer.style.transform = "translateX(0)";
+                    isInfoVisible = true;
+                }
             });
         });
     </script>
