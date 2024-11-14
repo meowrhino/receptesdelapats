@@ -19,6 +19,7 @@
             background-color: #FFF3E0;
             opacity: 1;
             background: repeating-linear-gradient(-45deg, #B99470, #B99470 8px, #FFF3E0 8px, #FFF3E0 40px);
+            background-attachment: fixed;
         }
 
         h1,
@@ -33,6 +34,8 @@
             margin-bottom: 40px;
             font-size: 40px;
             text-rendering: optimizeLegibility;
+            text-shadow: 1px 1px 2px #BF360C, 0 0 0.05em #BF360C;
+            color: #FFECC8;
         }
 
         /* Contenedor de recetas estilo masonry */
@@ -86,26 +89,24 @@
         /* Estilos para la lengüeta "info" */
         .info-tab {
             position: absolute;
-            right: -50px;
+            right: -150px;
             /* Ajuste inicial para colocar la lengüeta fuera */
             top: 50%;
-            transform: translateY(-50%) rotate(90deg);
             background-color: #5D4037;
             color: #FFF3E0;
             padding: 5px 10px;
-            border-radius: 8px 8px 0 0;
+            border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: -3px 0 6px rgba(0, 0, 0, 0.2);
             z-index: 10;
             /* Para que esté siempre encima y visible */
             transition: transform 0.4s cubic-bezier(0.25, 1.3, 0.5, 1);
-            padding-bottom: 100px;
         }
 
         /* Cambiar el z-index, la posición y aplicar la animación al pasar el ratón por la lengüeta */
         .info-tab:hover {
-            transform: translateY(-50%) rotate(90deg) scale(1.1);
+            transform: scale(1.25);
         }
 
 
@@ -257,19 +258,37 @@
         /* Estilos para el Contenedor de Alérgenos */
         #alergia-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 40px;
+            right: 40px;
 
-            background-color: #ffc8b2;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            /*quiero que alergia-container aparezca de la misma manera que aparece la nota informativa
+            ee incluso modificar la nota informativa para que diga "modo alergia" 
+            y que su texto sea " has actvado el modo alergia masacra tus alérgenos de esta página
+            (no garantizamos que quede receta en pie)
+            
+            y cuando le des a cada alérgeno
+            igual una animacion que salga el emoji de explosión por un momento
+            o que tu raton cuando entre en el selector de alergias cambiie a una diana de emoji
+            eso molaria tambien*/
+            margin-bottom: -50px;
+            margin-right: -50px;
+            padding-bottom: -50px;
+            padding-right: -50px;
 
-            padding: 20px;
+            background-color: #B99470;
+
+            padding: 30px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
+
+            clip-path: 
+            polygon(40% 0, 100% 0, 100% 100%, 0 100%, 0 10%);
+
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.25, 1.3, 0.5, 1);
         }
 
 
@@ -1152,6 +1171,7 @@
             // Seleccionar los elementos necesarios
             const infoContainer = document.querySelector('.info');
             const infoTab = document.querySelector('.info-tab');
+            const alergiaContainer = document.querySelector('#alergia-container');
 
             // Variable para almacenar el estado actual del contenedor
             let isInfoVisible = false;
@@ -1162,10 +1182,18 @@
                     // Ocultar el contenedor .info
                     infoContainer.style.transform = "translateX(-100%)";
                     infoContainer.style.marginLeft = "-50px";
+                    infoTab.style.right = "-150px";
+
+                    alergiaContainer.style.transform = "translateX(100%)";
+
                     isInfoVisible = false;
                 } else {
                     // Mostrar el contenedor .info
                     infoContainer.style.transform = "translateX(0)";
+                    infoTab.style.right = "-30px";
+
+                    alergiaContainer.style.transform = "translateX(0)";
+
                     isInfoVisible = true;
                 }
             });
